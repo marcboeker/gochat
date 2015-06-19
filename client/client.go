@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"strings"
 
 	"github.com/marcboeker/gochat/protocol"
 )
@@ -57,10 +59,10 @@ func Start(username string) {
 	go listen()
 
 	for {
-		var message string
-		_, err := fmt.Scanln(&message)
+		in := bufio.NewReader(os.Stdin)
+		message, err := in.ReadString('\n')
 		if err == nil {
-			m := &protocol.Message{User: username, Message: message}
+			m := &protocol.Message{User: username, Message: strings.TrimSpace(message)}
 			err = send(m)
 			if err != nil {
 				fmt.Errorf("Could not send message", err)
